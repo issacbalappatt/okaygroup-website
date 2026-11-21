@@ -2,7 +2,7 @@ const menuButton = document.querySelector('.nav-toggle');
 const menu = document.getElementById('main-nav');
 
 if (menuButton && menu) {
-  const compact = window.matchMedia('(max-width: 780px)');
+  const compact = window.matchMedia('(max-width: 1000px)');
 
   function setMenu(open) {
     menu.hidden = !open;
