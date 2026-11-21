@@ -291,6 +291,12 @@ textarea { resize: vertical; min-height: 115px; }
 [lang="ml-IN"] .page-head h1 { font-size: clamp(2.05rem, 5vw, 4.45rem); max-width: 25ch; }
 [lang="ml-IN"] .info-card h2 { font-size: clamp(1.17rem, 2vw, 1.8rem); }
 
+@media (min-width: 1001px) and (max-width: 1140px) {
+  [lang="ml-IN"] .mast-row { gap: 14px; }
+  [lang="ml-IN"] .nav-row { gap: 12px; }
+  [lang="ml-IN"] .nav-row a { font-size: .8rem; }
+}
+
 @media (max-width: 1000px) {
   .wrap { width: calc(100% - 56px); }
   .catalogue .split-title { align-items: start; flex-direction: column; }
