@@ -80,7 +80,9 @@ if (enquiry) {
         '', 'Name: ' + value('name'),
         'Company or facility: ' + value('company'),
         'Email: ' + value('email'),
-        'Delivery location: ' + value('location'),
+        'Delivery town or suburb: ' + value('location'),
+        'Delivery district: ' + value('district'),
+        'Delivery PIN code: ' + value('postcode'),
         '', 'Requirements:', value('requirements'),
       ].join('\r\n'),
     };
