@@ -76,6 +76,8 @@ a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible
 .nav-row a { display: flex; align-items: center; color: var(--muted); font-weight: 580; font-size: .87rem; white-space: nowrap; min-height: 40px; }
 .nav-row a:hover, .nav-row a[aria-current] { color: var(--accent); }
 .mast-actions { display: flex; align-items: center; gap: 10px; }
+.language-switch { display: inline-flex; align-items: center; min-height: 44px; color: var(--accent); white-space: nowrap; font-size: .83rem; font-weight: 660; }
+.language-switch:hover { text-decoration: underline; text-underline-offset: .2em; }
 .nav-enquire { min-height: 42px; padding: 7px 14px; }
 .nav-enquire .icon { width: 16px; height: 16px; }
 .nav-toggle { display: none; }
@@ -278,9 +280,16 @@ textarea { resize: vertical; min-height: 115px; }
 .inline-links { display: flex; flex-wrap: wrap; gap: 0 18px; margin-top: 7px; }
 .district-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); list-style: none; padding: 0; margin: 22px 0 0; gap: 10px; }
 .district-grid li { padding: 12px 13px; border: 1px solid var(--line); border-radius: 10px; font-size: .96rem; }
+.topic-links { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 5px 16px; padding: 0; margin: 14px 0 0; list-style: none; }
+.topic-links li { border-bottom: 1px solid var(--line); }
+.topic-links .text-link { min-height: 46px; padding-block: 3px; }
 .resource-heading { margin-bottom: 25px; }
 .info-card h3 a { color: var(--accent); }
 .info-card h3 a:hover { text-decoration: underline; text-underline-offset: .18em; }
+:lang(ml) { font-family: "Noto Sans Malayalam", "Nirmala UI", "Malayalam Sangam MN", system-ui, sans-serif; }
+[lang="ml-IN"] h1, [lang="ml-IN"] h2 { line-height: 1.35; letter-spacing: 0; overflow-wrap: anywhere; }
+[lang="ml-IN"] .page-head h1 { font-size: clamp(2.05rem, 5vw, 4.45rem); max-width: 25ch; }
+[lang="ml-IN"] .info-card h2 { font-size: clamp(1.17rem, 2vw, 1.8rem); }
 
 @media (max-width: 1000px) {
   .wrap { width: calc(100% - 56px); }
@@ -289,9 +298,8 @@ textarea { resize: vertical; min-height: 115px; }
   .hero { min-height: 590px; }
 }
 
-@media (max-width: 780px) {
+@media (max-width: 1000px) {
   :root { --header-height: 60px; }
-  .wrap { width: calc(100% - 36px); }
   .mast-row { flex-wrap: wrap; gap: 0; }
   .mast-actions { margin-left: auto; }
   .nav-row { width: 100%; order: 2; flex-wrap: wrap; gap: 0 18px; padding-block: 2px 9px; }
@@ -317,6 +325,10 @@ textarea { resize: vertical; min-height: 115px; }
     background: white;
     cursor: pointer;
   }
+}
+
+@media (max-width: 870px) {
+  .wrap { width: calc(100% - 36px); }
   .hero { align-items: start; text-align: center; min-height: 0; }
   .hero-copy { padding: 51px 0 clamp(295px, 88vw, 535px); }
   .hero picture { inset: auto 0 0; width: 100%; height: clamp(265px, 84vw, 515px); }
@@ -345,11 +357,17 @@ textarea { resize: vertical; min-height: 115px; }
 }
 
 @media (max-width: 540px) {
-  .content-grid, .form-grid { grid-template-columns: 1fr; }
+  .content-grid, .form-grid, .topic-links { grid-template-columns: 1fr; }
   .hero-actions { gap: 8px; }
   .hero-actions .button { padding-inline: 13px; }
   .cylinder-body .icon { width: 15px; height: 15px; }
   .catalogue-end { align-items: start; flex-direction: column; gap: 0; }
+}
+
+@media (max-width: 400px) {
+  .mast-actions { gap: 6px; }
+  .nav-enquire { padding-inline: 9px; }
+  .nav-enquire .icon { display: none; }
 }
 
 @media (prefers-reduced-motion: reduce) {

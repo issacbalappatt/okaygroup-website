@@ -6,6 +6,8 @@ Public website for Okay Group and Manorama Oxygen in Kalamassery, Kerala. This i
 
 Edit the buying copy in `scripts/catalogue_content.py` and the shared templates in `scripts/build_site.py`. Run `python3 scripts/build_site.py` and commit the generated HTML and sitemap with the source changes. The sitemap contains all canonical public pages and is advertised in `robots.txt`.
 
+`scripts/buying_content.py` contains focused product-format pages and Malayalam labels. The homepage, catalogue and coverage page have paired English and Malayalam URLs with reciprocal language metadata.
+
 Okay Group confirmed it operates branches across Kerala and offers delivery across the state. The coverage page lists delivery districts and the confirmed corporate office. Customers can enquire about the specific branch serving their address.
 
 ## Site animation

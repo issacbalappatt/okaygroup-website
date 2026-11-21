@@ -3,12 +3,19 @@ import json
 from html import escape
 from urllib.parse import urlsplit
 
+from buying_content import BUYING_PAGES, MALAYALAM_DISTRICTS, MALAYALAM_PRODUCTS
 from catalogue_content import APPLICATION_DETAILS, DISTRICTS, GUIDES, PRODUCT_DETAILS, SUPPLY_DETAILS
 
 SITE = 'https://okaygroup.org/'
 EMAIL = 'okaygroup@live.com'
 ROOT = Path(__file__).resolve().parents[1]
 PAGES = []
+MALAYALAM_PAGES = {
+    'index.html': 'ml/index.html',
+    'products.html': 'ml/products.html',
+    'locations.html': 'ml/locations.html',
+}
+ENGLISH_PAGES = {translation: source for source, translation in MALAYALAM_PAGES.items()}
 MAP = 'https://www.google.com/maps/search/?api=1&amp;query=Manorama+Oxygen+Major+Industrial+Estate+Kalamassery'
 INDIAMART = 'https://www.indiamart.com/manorama-oxygen-pvtltd/'
 nav = [('index.html', 'Home'), ('products.html', 'Our gases'), ('industries.html', 'Industries'),
@@ -33,7 +40,11 @@ def icon(name):
     return f'<svg class="icon" viewBox="0 0 24 24" aria-hidden="true">{icons[name]}</svg>'
 
 def public_url(path):
-    return '/' if path == 'index.html' else '/' + path
+    if path == 'index.html':
+        return '/'
+    if path == 'ml/index.html':
+        return '/ml/'
+    return '/' + path
 
 def local_href(href):
     if href.startswith(('/', '#')) or urlsplit(href).scheme:
@@ -50,14 +61,54 @@ def shot(name, alt='', lazy=True):
     loading = ' loading="lazy"' if lazy else ''
     return f'<img src="/assets/{name}.webp" alt="{alt}"{loading} decoding="async">'
 
-def brand():
-    return '<a class="brand" href="/" aria-label="Okay Group home"><span class="brand-main">OKAY</span><span class="brand-small">GROUP</span></a>'
+def brand(malayalam=False):
+    href = '/ml/' if malayalam else '/'
+    label = 'ഒകെ ഗ്രൂപ്പ് ഹോം' if malayalam else 'Okay Group home'
+    return f'<a class="brand" href="{href}" aria-label="{label}"><span class="brand-main">OKAY</span><span class="brand-small">GROUP</span></a>'
 
-def nav_links(current):
-    return ''.join(f'<a href="{public_url(url)}"{" aria-current=\"page\"" if current == url else ""}>{escape(label)}</a>' for url, label in nav)
+def nav_links(current, malayalam):
+    links = nav
+    if malayalam:
+        links = [
+            ('ml/index.html', 'ഹോം'), ('ml/products.html', 'ഉൽപ്പന്നങ്ങൾ'), ('ml/locations.html', 'വിതരണ മേഖല'),
+            ('industries.html', 'വ്യവസായങ്ങൾ'), ('companies.html', 'ഞങ്ങളെക്കുറിച്ച്'),
+        ]
+    return ''.join(f'<a href="{public_url(url)}"{" aria-current=\"page\"" if current == url else ""}>{escape(label)}</a>' for url, label in links)
+
+
+def footer(malayalam):
+    if malayalam:
+        return f'''<footer class="footer"><div class="wrap footer-grid">
+<div>{brand(True)}<p>വ്യാവസായിക വാതകങ്ങളും മെഡിക്കൽ ഓക്സിജനും<br>കളമശ്ശേരി, കേരളം</p></div>
+<div><h2>കൂടുതൽ വിവരങ്ങൾ</h2><nav aria-label="അടിക്കുറിപ്പ്"><a href="/ml/products.html">ഉൽപ്പന്നങ്ങൾ</a><a href="/ml/locations.html">കേരളത്തിലെ വിതരണം</a><a href="/guides.html">വാങ്ങൽ മാർഗ്ഗനിർദ്ദേശങ്ങൾ (ഇംഗ്ലീഷ്)</a></nav></div>
+<div><h2>ബന്ധപ്പെടുക</h2><address>മേജർ ഇൻഡസ്ട്രിയൽ എസ്റ്റേറ്റ്<br>കളമശ്ശേരി, എറണാകുളം, കേരളം</address><a href="mailto:{EMAIL}">{EMAIL}</a><a href="/contact.html">അന്വേഷണ ഫോം (ഇംഗ്ലീഷ്)</a></div>
+</div><div class="wrap footer-bottom"><p>© Okay Group</p></div></footer>'''
+    return f'''<footer class="footer">
+  <div class="wrap footer-grid">
+    <div>{brand()}<p>Industrial and medical gas supply<br>Kalamassery, Kerala</p></div>
+    <div><h2>Explore</h2><nav aria-label="Footer navigation"><a href="/products.html">Our gases</a><a href="/industries.html">Industries and applications</a><a href="/supply.html">Supply and quality</a><a href="/guides.html">Gas buying guides</a><a href="/manorama-oxygen.html">Manorama Oxygen Pvt. Ltd.</a></nav></div>
+    <div><h2>Get in touch</h2><address>Major Industrial Estate, Kalamassery<br>Ernakulam, Kerala, India</address><a href="mailto:{EMAIL}">{EMAIL}</a><a href="/contact.html">Enquiries and directions</a><a href="/locations.html">Kerala branches and delivery</a><a href="/ml/" lang="ml-IN">മലയാളം</a></div>
+  </div>
+  <div class="wrap footer-bottom"><p>© Okay Group</p></div>
+</footer>'''
 
 def render(file, title, description, content, social='gas-facility', extra_schema=None, trail=(), article=False):
     canonical = SITE.rstrip('/') + public_url(file)
+    malayalam = file in ENGLISH_PAGES
+    language = 'ml-IN' if malayalam else 'en-IN'
+    locale = language.replace('-', '_')
+    alternate = ENGLISH_PAGES.get(file) if malayalam else MALAYALAM_PAGES.get(file)
+    language_tags = ''
+    language_switch = ''
+    if alternate:
+        source = alternate if malayalam else file
+        translation = file if malayalam else alternate
+        destination = public_url(alternate)
+        for code, path in (('en-IN', source), ('ml-IN', translation), ('x-default', source)):
+            language_tags += f'\n  <link rel="alternate" hreflang="{code}" href="{SITE.rstrip("/") + public_url(path)}">'
+        label = 'English' if malayalam else 'മലയാളം'
+        alternate_language = 'en-IN' if malayalam else 'ml-IN'
+        language_switch = f'<a class="language-switch" href="{destination}" lang="{alternate_language}" hreflang="{alternate_language}">{label}</a>'
     schema = []
     if file in {'index.html', 'companies.html'}:
         schema.append({
@@ -78,7 +129,8 @@ def render(file, title, description, content, social='gas-facility', extra_schem
         schema.append(extra_schema)
     crumbs = ''
     if trail:
-        full_trail = (('index.html', 'Home'),) + trail
+        home = ('ml/index.html', 'ഹോം') if malayalam else ('index.html', 'Home')
+        full_trail = (home,) + trail
         schema.append({
             '@type': 'BreadcrumbList',
             'itemListElement': [
@@ -87,7 +139,8 @@ def render(file, title, description, content, social='gas-facility', extra_schem
             ],
         })
         anchors = ''.join(f'<li><a href="{public_url(path)}">{escape(name)}</a></li>' for path, name in full_trail[:-1])
-        crumbs = f'<nav class="breadcrumb wrap" aria-label="Breadcrumb"><ol>{anchors}<li aria-current="page">{escape(full_trail[-1][1])}</li></ol></nav>'
+        breadcrumb_label = 'പേജ് പാത' if malayalam else 'Breadcrumb'
+        crumbs = f'<nav class="breadcrumb wrap" aria-label="{breadcrumb_label}"><ol>{anchors}<li aria-current="page">{escape(full_trail[-1][1])}</li></ol></nav>'
     structured_data = ''
     if schema:
         graph = json.dumps({'@context': 'https://schema.org', '@graph': schema}, ensure_ascii=False)
@@ -95,17 +148,21 @@ def render(file, title, description, content, social='gas-facility', extra_schem
     noindex = '<meta name="robots" content="noindex">' if file == '404.html' else ''
     canonical_tag = f'<link rel="canonical" href="{canonical}">' if not noindex else ''
     og_type = 'article' if article else 'website'
+    skip_label = 'പ്രധാന ഉള്ളടക്കത്തിലേക്ക്' if malayalam else 'Skip to content'
+    navigation_label = 'പ്രധാന മെനു' if malayalam else 'Main navigation'
+    menu_label = 'മെനു' if malayalam else 'Menu'
+    enquiry_label = 'ബന്ധപ്പെടുക' if malayalam else 'Enquire'
     site = f'''<!doctype html>
-<html lang="en-IN">
+<html lang="{language}">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>{escape(title)}</title>
   <meta name="description" content="{escape(description)}">
   <meta name="theme-color" content="#101a29">
-  {noindex}{canonical_tag}
+  {noindex}{canonical_tag}{language_tags}
   <meta property="og:type" content="{og_type}">
-  <meta property="og:locale" content="en_IN">
+  <meta property="og:locale" content="{locale}">
   <meta property="og:site_name" content="Okay Group">
   <meta property="og:title" content="{escape(title)}">
   <meta property="og:description" content="{escape(description)}">
@@ -120,14 +177,15 @@ def render(file, title, description, content, social='gas-facility', extra_schem
 {structured_data}
 </head>
 <body>
-<a class="skip" href="#main">Skip to content</a>
+<a class="skip" href="#main">{skip_label}</a>
 <header class="masthead">
   <div class="wrap mast-row">
-    {brand()}
-    <nav class="nav-row" id="main-nav" aria-label="Main navigation">{nav_links(file)}</nav>
+    {brand(malayalam)}
+    <nav class="nav-row" id="main-nav" aria-label="{navigation_label}">{nav_links(file, malayalam)}</nav>
     <div class="mast-actions">
-      {button('contact.html', 'Enquire', 'nav-enquire')}
-      <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="main-nav" aria-label="Menu" hidden>{icon('menu')}</button>
+{language_switch}
+      {button('contact.html', enquiry_label, 'nav-enquire')}
+      <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="main-nav" aria-label="{menu_label}" hidden>{icon('menu')}</button>
     </div>
   </div>
 </header>
@@ -135,14 +193,7 @@ def render(file, title, description, content, social='gas-facility', extra_schem
 {crumbs}
 {content}
 </main>
-<footer class="footer">
-  <div class="wrap footer-grid">
-    <div>{brand()}<p>Industrial and medical gas supply<br>Kalamassery, Kerala</p></div>
-    <div><h2>Explore</h2><nav aria-label="Footer navigation"><a href="/products.html">Our gases</a><a href="/industries.html">Industries and applications</a><a href="/supply.html">Supply and quality</a><a href="/guides.html">Gas buying guides</a><a href="/manorama-oxygen.html">Manorama Oxygen Pvt. Ltd.</a></nav></div>
-    <div><h2>Get in touch</h2><address>Major Industrial Estate, Kalamassery<br>Ernakulam, Kerala, India</address><a href="mailto:{EMAIL}">{EMAIL}</a><a href="/contact.html">Enquiries and directions</a><a href="/locations.html">Kerala branches and delivery</a></div>
-  </div>
-  <div class="wrap footer-bottom"><p>© Okay Group</p></div>
-</footer>
+{footer(malayalam)}
 </body>
 </html>
 '''
@@ -155,8 +206,8 @@ def render(file, title, description, content, social='gas-facility', extra_schem
 def page_head(label, heading, intro, action=''):
     return f'<section class="page-head"><div class="wrap"><p class="eyebrow">{label}</p><h1>{heading}</h1><p class="intro">{intro}</p>{action}</div></section>'
 
-def callout(heading='Get a gas supply quote', desc='Share the gas, grade, quantity and delivery postcode with our team.', enquiry='contact.html'):
-    return f'<section class="callout"><div class="wrap"><div><h2>{heading}</h2><p>{desc}</p></div>{button(enquiry, "Make an enquiry")}</div></section>'
+def callout(heading='Get a gas supply quote', desc='Share the gas, grade, quantity and delivery postcode with our team.', enquiry='contact.html', button_label='Make an enquiry'):
+    return f'<section class="callout"><div class="wrap"><div><h2>{heading}</h2><p>{desc}</p></div>{button(enquiry, button_label)}</div></section>'
 
 products = {
     'industrial-oxygen': ('Industrial oxygen', 'O₂', 'Oxygen supports industrial processes such as oxy-fuel cutting and combustion. Ask about the industrial grade and cylinder format required for your process.'),
@@ -218,7 +269,7 @@ tile_grid = ''.join(f'<a class="tile" href="{url}">{shot(pic)}<h3>{head}</h3><p>
 render('index.html', 'Industrial & Medical Gas Supplier in Kerala | Okay Group',
        'Okay Group and Manorama Oxygen supply industrial gases, medical oxygen and dry ice, with branches and delivery across all 14 districts of Kerala.', f'''
 <section class="hero">
-  <picture><source media="(max-width: 780px)" srcset="assets/cylinder-studio-mobile.webp"><img src="assets/cylinder-studio.webp" alt="" fetchpriority="high" decoding="async"></picture>
+  <picture><source media="(max-width: 870px)" srcset="assets/cylinder-studio-mobile.webp"><img src="assets/cylinder-studio.webp" alt="" fetchpriority="high" decoding="async"></picture>
   <div class="wrap hero-copy">
     <p class="eyebrow">Okay Group · Manorama Oxygen</p>
     <h1>Industrial gases.<br><span>Medical oxygen.</span></h1>
@@ -276,10 +327,14 @@ groups = [('industrial', 'Industrial gases', industrial), ('healthcare', 'Medica
           ('specialty', 'Dry ice and cryogenic equipment', specialty)]
 jumps = ''.join(f'<a href="#{key}">{title}</a>' for key,title,_ in groups)
 details = ''.join(f'<section class="content-group" id="{key}"><h2>{title}</h2><div class="content-grid">{"".join(map(product_card, keys))}</div></section>' for key,title,keys in groups)
+buying_links = ''.join(f'<li>{link(f"gases/{key}.html", escape(entry[0]))}</li>' for key, entry in BUYING_PAGES.items())
 render('products.html', 'Industrial Gases, Medical Oxygen & Dry Ice | Okay Group',
        'Explore industrial and medical oxygen, nitrogen, argon, carbon dioxide, acetylene, helium, dry ice and cryogenic equipment from Okay Group and Manorama Oxygen.',
        page_head('Product catalogue', 'Gases, dry ice and equipment', 'Explore our industrial and healthcare range. Enquire about your required grade, supply format and availability.') +
        f'''<div class="wrap page-content"><nav class="jump" aria-label="Product categories">{jumps}</nav>{details}
+       <section class="content-group" id="specific-supply"><h2>Specific gas formats and applications</h2>
+         <ul class="topic-links">{buying_links}</ul>
+       </section>
        <section class="content-group feature" id="special-gas-enquiries">
          <h2>Looking for a specific gas or grade?</h2>
          <p>For nitrous oxide, specialty mixtures or an unlisted grade, send your specification and required volume so our team can check sourcing and availability.</p>
@@ -404,7 +459,8 @@ for key, (heading, description, sections, related) in PRODUCT_DETAILS.items():
     path = f'gases/{key}.html'
     path_enquiry = f'contact.html?product={key}'
     sector_title = next(title.replace('<br>', ' ') for slug, title, *_ in sectors if slug == category)
-    related_links = related_products(related) + [
+    formats = [(f'gases/{slug}.html', item[0]) for slug, item in BUYING_PAGES.items() if key == item[2]]
+    related_links = formats + related_products(related) + [
         (f'applications/{category}.html', sector_title),
         ('locations.html', 'Kerala delivery coverage'),
     ]
@@ -414,11 +470,23 @@ for key, (heading, description, sections, related) in PRODUCT_DETAILS.items():
         + detail_body(sections, related_links, 'Related products and applications')
         + callout(f'Enquire about {name.lower()}', enquiry=path_enquiry),
         product_art[key],
-        extra_schema={
-            '@type': 'Product', '@id': SITE + path + '#product',
-            'name': name, 'url': SITE + path, 'description': description,
-        },
         trail=(('products.html', 'Our gases'), (path, name)),
+    )
+
+
+for key, (heading, description, enquiry, photo, related, sections) in BUYING_PAGES.items():
+    path = f'gases/{key}.html'
+    enquiry_link = f'contact.html?product={enquiry}'
+    render(
+        path, heading + ' | Okay Group', description,
+        page_head('Our gases', escape(heading), escape(description), button(enquiry_link, 'Request a quote'))
+        + detail_body(sections, related_products(related) + [
+            ('locations.html', 'Kerala delivery coverage'),
+            ('supply/product-documentation.html', 'Request specifications or safety data sheets'),
+        ])
+        + callout(enquiry=enquiry_link),
+        photo,
+        trail=(('products.html', 'Our gases'), (path, heading)),
     )
 
 
@@ -511,6 +579,74 @@ render(
         'areaServed': {'@type': 'State', 'name': 'Kerala'},
     },
     trail=(('locations.html', 'Kerala branches and delivery'),),
+)
+
+
+render(
+    'ml/index.html', 'കേരളത്തിലെ വ്യാവസായിക വാതക വിതരണക്കാർ | ഒകെ ഗ്രൂപ്പ്',
+    'ഒകെ ഗ്രൂപ്പും മനോരമ ഓക്സിജനും കേരളത്തിലെ 14 ജില്ലകളിലും വ്യാവസായിക വാതകങ്ങൾ, മെഡിക്കൽ ഓക്സിജൻ, ഡ്രൈ ഐസ് എന്നിവ വിതരണം ചെയ്യുന്നു.',
+    page_head(
+        'ഒകെ ഗ്രൂപ്പ് · മനോരമ ഓക്സിജൻ', 'കേരളത്തിലുടനീളം വാതക വിതരണം',
+        'വ്യവസായ സ്ഥാപനങ്ങൾക്കും ആശുപത്രികൾക്കും ലബോറട്ടറികൾക്കും ആവശ്യമായ വാതകങ്ങൾ. കേരളത്തിലെ എല്ലാ ജില്ലകളിലും ഡെലിവറിയും സംസ്ഥാനത്തുടനീളം ശാഖകളും.',
+        button('ml/products.html', 'ഉൽപ്പന്നങ്ങൾ കാണുക'),
+    ) + '''
+<section class="wrap page-content">
+  <div class="content-grid">
+    <article class="info-card"><h2>വ്യാവസായിക വാതകങ്ങൾ</h2><p>വെൽഡിങ്, കട്ടിങ്, ഉൽപ്പാദനം, ലബോറട്ടറി ആവശ്യങ്ങൾ എന്നിവയ്ക്കായി ഓക്സിജൻ, നൈട്രജൻ, ആർഗൺ, കാർബൺ ഡൈഓക്സൈഡ് എന്നിവയെക്കുറിച്ച് അന്വേഷിക്കാം.</p>
+    <a class="text-link" href="/ml/products.html#industrial">വ്യാവസായിക വാതകങ്ങൾ കാണുക</a></article>
+    <article class="info-card"><h2>മെഡിക്കൽ ഓക്സിജൻ</h2><p>ആശുപത്രികൾക്കും ആരോഗ്യ സ്ഥാപനങ്ങൾക്കും ആവശ്യമായ മെഡിക്കൽ ഓക്സിജൻ സിലിണ്ടറുകൾ, വിതരണ രീതി, രേഖകൾ എന്നിവയെക്കുറിച്ച് അന്വേഷിക്കാം.</p>
+    <a class="text-link" href="/ml/products.html#healthcare">മെഡിക്കൽ ഓക്സിജൻ വിവരങ്ങൾ</a></article>
+    <article class="info-card"><h2>കേരളത്തിലെ ഡെലിവറി</h2><p>വിതരണം വേണ്ട സ്ഥലം, ജില്ല, പിൻ കോഡ് എന്നിവ അറിയിച്ചാൽ നിങ്ങളുടെ വിലാസത്തിലേക്ക് സേവനം നൽകുന്ന ശാഖയും വിതരണ സമയവും സ്ഥിരീകരിക്കാം.</p>
+    <a class="text-link" href="/ml/locations.html">വിതരണ ജില്ലകൾ കാണുക</a></article>
+  </div>
+</section>''' + callout(
+        'വിലവിവരങ്ങൾ ചോദിക്കാം', 'വാതകത്തിന്റെ പേര്, ഗ്രേഡ്, അളവ്, ഡെലിവറി പിൻ കോഡ് എന്നിവ നൽകുക.',
+        enquiry='contact.html',
+        button_label='അന്വേഷണ ഫോം (ഇംഗ്ലീഷ്)',
+    ),
+    'cylinder-studio',
+)
+
+ml_groups = [
+    ('industrial', 'വ്യാവസായിക വാതകങ്ങൾ', industrial,
+     'സിലിണ്ടർ രൂപത്തിലാണോ ദ്രാവക രൂപത്തിലാണോ വേണ്ടത്, ഉപയോഗം, ഗ്രേഡ്, ആവശ്യമായ അളവ് എന്നിവ വ്യക്തമാക്കുക.'),
+    ('healthcare', 'മെഡിക്കൽ ഓക്സിജനും ഉപകരണങ്ങളും', medical,
+     'ആശുപത്രി അല്ലെങ്കിൽ ആരോഗ്യ സ്ഥാപനത്തിന്റെ പേര്, സിലിണ്ടർ തരം, ആവശ്യമായ അളവ്, വാങ്ങലിന് വേണ്ട രേഖകൾ എന്നിവ അറിയിക്കുക.'),
+    ('specialty', 'ഡ്രൈ ഐസും സംഭരണ പാത്രങ്ങളും', specialty,
+     'ഡ്രൈ ഐസിന് ആവശ്യമായ ഭാരം, എടുക്കേണ്ട തീയതി, ഡെലിവറി സ്ഥലം എന്നിവ നൽകുക. ദ്രാവക നൈട്രജൻ പാത്രങ്ങൾക്കായി ആവശ്യമായ ശേഷി അറിയിക്കുക.'),
+]
+ml_catalogue = ''
+for key, heading, keys, summary in ml_groups:
+    rows = ''.join(
+        f'<li><a class="text-link" href="/gases/{item}.html">{MALAYALAM_PRODUCTS[item]} <span lang="en-IN">(English)</span></a></li>'
+        for item in keys
+    )
+    ml_catalogue += f'<section class="content-group" id="{key}"><h2>{heading}</h2><p>{summary}</p><ul class="topic-links">{rows}</ul></section>'
+render(
+    'ml/products.html', 'വ്യാവസായിക വാതകങ്ങൾ, മെഡിക്കൽ ഓക്സിജൻ, ഡ്രൈ ഐസ് | ഒകെ ഗ്രൂപ്പ്',
+    'കേരളത്തിൽ വ്യാവസായിക ഓക്സിജൻ, നൈട്രജൻ, ആർഗൺ, കാർബൺ ഡൈഓക്സൈഡ്, മെഡിക്കൽ ഓക്സിജൻ, ഡ്രൈ ഐസ് എന്നിവയുടെ വിതരണത്തിന് അന്വേഷിക്കാം.',
+    page_head('ഉൽപ്പന്നങ്ങൾ', 'വാതകങ്ങൾ, ഡ്രൈ ഐസ്, ഉപകരണങ്ങൾ', 'വ്യാവസായിക ആവശ്യങ്ങൾക്കും ആരോഗ്യ സ്ഥാപനങ്ങൾക്കും ലഭ്യമായ വിതരണ രീതികളെക്കുറിച്ച് അറിയുക.')
+    + f'<div class="wrap page-content">{ml_catalogue}</div>'
+    + callout('ഉൽപ്പന്ന വിവരങ്ങൾ ചോദിക്കാം', 'ആവശ്യമായ ഗ്രേഡ്, അളവ്, സിലിണ്ടർ തരം, വിതരണ സ്ഥലം എന്നിവ നൽകുക.', button_label='അന്വേഷണ ഫോം (ഇംഗ്ലീഷ്)'),
+    trail=(('ml/products.html', 'ഉൽപ്പന്നങ്ങൾ'),),
+)
+
+ml_districts = ''.join(f'<li>{district}</li>' for district in MALAYALAM_DISTRICTS)
+render(
+    'ml/locations.html', 'കേരളത്തിലെ ശാഖകളും വാതക വിതരണവും | ഒകെ ഗ്രൂപ്പ്',
+    'ഒകെ ഗ്രൂപ്പിന് കേരളത്തിലുടനീളം ശാഖകളുണ്ട്. 14 ജില്ലകളിലും വ്യാവസായിക വാതകങ്ങൾ, മെഡിക്കൽ ഓക്സിജൻ, ഡ്രൈ ഐസ് എന്നിവയുടെ ഡെലിവറി ലഭ്യമാണ്.',
+    page_head('വിതരണ മേഖല', 'കേരളത്തിലെ എല്ലാ ജില്ലകളിലും ഡെലിവറി', 'നിങ്ങളുടെ സ്ഥലത്തേക്ക് വിതരണം ചെയ്യുന്ന ശാഖ ഏതെന്ന് അറിയാൻ പട്ടണം, ജില്ല, പിൻ കോഡ് എന്നിവ നൽകുക.')
+    + f'''<div class="wrap page-content">
+  <section class="content-group"><h2>വിതരണം ലഭ്യമായ ജില്ലകൾ</h2><ul class="district-grid">{ml_districts}</ul></section>
+  <section class="content-group two-column">
+    <div class="feature contact-details"><p class="eyebrow">കോർപ്പറേറ്റ് ഓഫീസ്</p><h2>കളമശ്ശേരി, കൊച്ചി</h2><address>മേജർ ഇൻഡസ്ട്രിയൽ എസ്റ്റേറ്റ്<br>കളമശ്ശേരി, എറണാകുളം, കേരളം</address>
+    {link(MAP, 'ഓഫീസിലേക്കുള്ള വഴി')}{link('mailto:' + EMAIL, EMAIL)}</div>
+    <div class="detail-copy"><section><h2>ഡെലിവറിക്ക് ആവശ്യമായ വിവരങ്ങൾ</h2><p>വാതകത്തിന്റെ പേര്, ഗ്രേഡ്, ആവശ്യമായ അളവ്, വിതരണ തീയതി, സ്വീകരിക്കുന്ന വ്യക്തിയുടെ വിവരങ്ങൾ എന്നിവ അറിയിക്കുക. സ്ഥിരമായി വിതരണം വേണമെങ്കിൽ ഓരോ ഓർഡറിന്റെയും അളവും ഇടവേളയും വ്യക്തമാക്കുക.</p></section></div>
+  </section>
+</div>'''
+    + callout('ശാഖയോ ഡെലിവറിയോ അന്വേഷിക്കാം', 'ഡെലിവറി വിലാസവും ആവശ്യമായ ഉൽപ്പന്നവും അറിയിക്കുക.',
+              enquiry='contact.html?product=delivery', button_label='അന്വേഷണ ഫോം (ഇംഗ്ലീഷ്)'),
+    trail=(('ml/locations.html', 'വിതരണ മേഖല'),),
 )
 
 
