@@ -2,6 +2,12 @@
 
 Public website for Okay Group and Manorama Oxygen in Kalamassery, Kerala. This is a static site. Serve the repository root with `python3 -m http.server 8000` to preview it. GitHub Pages deploys pushes and merges to `main`. The `CNAME` file sets the production domain.
 
+## Editing the catalogue and coverage
+
+Edit the buying copy in `scripts/catalogue_content.py` and the shared templates in `scripts/build_site.py`. Run `python3 scripts/build_site.py` and commit the generated HTML and sitemap with the source changes. The sitemap contains all canonical public pages and is advertised in `robots.txt`.
+
+Okay Group confirmed it operates branches across Kerala and offers delivery across the state. The coverage page lists delivery districts and the confirmed corporate office. Customers can enquire about the specific branch serving their address.
+
 ## Site animation
 
 Install the pinned dependencies with `npm ci` and run `npm run build` when editing `src/motion.js`. Commit the regenerated `assets/motion.js` and `assets/motion.css` so GitHub Pages can serve them with the rest of the static site. [Motion](https://github.com/motiondivision/motion) handles entrances and catalogue transitions. [Lenis](https://github.com/darkroomengineering/lenis) eases mouse-wheel scrolling. Both respect the visitor’s reduced-motion preference. Touch scrolling stays native.
