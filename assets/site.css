@@ -69,7 +69,7 @@ button { font-size: inherit; }
 .hero { position: relative; display: grid; isolation: isolate; align-items: center; min-height: clamp(460px, 38.1vw, 620px); color: #fff; background: var(--deep); }
 .hero picture, .hero picture img, .hero::after { position: absolute; inset: 0; width: 100%; height: 100%; }
 .hero picture { z-index: -2; }
-.hero picture img { object-fit: cover; object-position: 50% 48%; }
+.hero picture img { object-fit: cover; object-position: 50% 6%; }
 .hero::after { z-index: -1; content: ""; background: linear-gradient(90deg, #061c3afc 0%, #071f40ee 23%, #081e3da3 49%, #071c3925 72%, #06152b1e 100%); }
 .hero-copy { padding-block: 70px 75px; }
 .hero h1 { max-width: 12ch; }
@@ -94,7 +94,7 @@ button { font-size: inherit; }
 .cylinder-card { min-width: 0; position: relative; display: flex; flex-direction: column; overflow: hidden; border: 1px solid var(--line); border-radius: 7px; background: #fff; transition: border .15s; }
 .cylinder-card:hover { border-color: #7291b1; }
 .cylinder-art { position: relative; display: block; height: 131px; overflow: hidden; background: #dce1e6; }
-.cylinder-art img { position: absolute; width: 100%; height: 100%; object-fit: cover; object-position: center 25%; }
+.cylinder-art img { position: absolute; width: 100%; height: 100%; object-fit: cover; object-position: center 13%; }
 .formula { position: absolute; display: block; bottom: 8px; right: 8px; color: #fff; background: var(--navy); font-size: .75rem; line-height: 1.2; padding: 4px 7px; border-radius: 3px; font-weight: 720; }
 .cylinder-body { display: grid; grid-template-columns: 1fr auto; align-items: center; gap: 4px; min-height: 67px; padding: 10px 11px; }
 .cylinder-body strong { display: block; font-size: .91rem; line-height: 1.2; }
@@ -187,7 +187,7 @@ textarea { resize: vertical; min-height: 115px; }
   .mast-location { display: none; }
   .mast-contact { gap: 13px; }
   .cylinder-grid { grid-template-columns: repeat(3, 1fr); }
-  .cylinder-art img { object-position: center 24%; }
+  .cylinder-art img { object-position: center 13%; }
   .service-row li { padding-inline: 12px; }
 }
 @media (max-width: 720px) {
