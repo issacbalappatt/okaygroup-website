@@ -2,6 +2,10 @@
 
 Public website for Okay Group and Manorama Oxygen in Kalamassery, Kerala. This is a static site. Serve the repository root with `python3 -m http.server 8000` to preview it. GitHub Pages deploys pushes and merges to `main`. The `CNAME` file sets the production domain.
 
+## Site animation
+
+Install the pinned dependencies with `npm ci` and run `npm run build` when editing `src/motion.js`. Commit the regenerated `assets/motion.js` and `assets/motion.css` so GitHub Pages can serve them with the rest of the static site. [Motion](https://github.com/motiondivision/motion) handles entrances and catalogue transitions. [Lenis](https://github.com/darkroomengineering/lenis) eases mouse-wheel scrolling. Both respect the visitor’s reduced-motion preference. Touch scrolling stays native.
+
 ## Research and editorial notes
 
 Reviewed on 19 November 2026. Historical records establish the business history and past activity. Current stock, delivery and operating permits should be confirmed directly with the business.
@@ -40,4 +44,6 @@ The public website describes Manorama Oxygen as a group company and the other th
 10. [Government Medical College Ernakulam medical gas tender award listing](https://tenderkart.in/tender/dac2c6dc-df2f-4922-8b0f-e7da6d17f1e6)
 11. [Okay Group corporate office on Justdial](https://www.justdial.com/Ernakulam/Okay-Group-Of-Companies-Corporate-Office-Major-Industrial-Estate-Kalamassery/0484PX484-X484-160627211512-X2G5_BZDET)
 
-The warehouse hero is a generated editorial illustration. The website labels it as illustrative.
+The catalogue structure, supply formats and application navigation draw on [INOX Air Products](https://inoxairproducts.com/what-we-do/). The products are based on the Okay Group and Manorama Oxygen sources above. The specialty gas form accepts sourcing enquiries, including nitrous oxide, which appears in a [public trade listing](https://www.indianyellowpages.com/ernakulam/manorama-oxygen-pvt-ltd-kalamassery-ernakulam-4230992/). Confirm current availability directly.
+
+The studio cylinder hero, warehouse and product artwork are illustrative.

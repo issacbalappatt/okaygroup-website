@@ -2,7 +2,7 @@ const menuButton = document.querySelector('.nav-toggle');
 const menu = document.getElementById('main-nav');
 
 if (menuButton && menu) {
-  const compact = window.matchMedia('(max-width: 720px)');
+  const compact = window.matchMedia('(max-width: 780px)');
 
   function setMenu(open) {
     menu.hidden = !open;
@@ -15,6 +15,9 @@ if (menuButton && menu) {
   }
 
   menuButton.addEventListener('click', () => setMenu(menu.hidden));
+  document.addEventListener('click', (event) => {
+    if (compact.matches && !menu.hidden && !event.target.closest('.masthead')) setMenu(false);
+  });
   document.addEventListener('keydown', (event) => {
     if (event.key === 'Escape' && compact.matches && !menu.hidden) {
       setMenu(false);
@@ -40,7 +43,12 @@ if (filters) {
   }
 
   for (const button of buttons) {
-    button.addEventListener('click', () => selectCategory(button.dataset.category));
+    button.addEventListener('click', () => {
+      if (button.getAttribute('aria-pressed') === 'true') return;
+      selectCategory(button.dataset.category);
+      const panel = document.getElementById(button.getAttribute('aria-controls'));
+      panel.dispatchEvent(new Event('okay:catalogue-change', { bubbles: true }));
+    });
   }
   selectCategory(buttons[0].dataset.category);
   filters.hidden = false;

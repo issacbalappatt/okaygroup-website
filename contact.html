@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Enquiries &amp; Directions | Okay Group, Kalamassery</title>
   <meta name="description" content="Contact the Okay Group and Manorama Oxygen office in Kalamassery, Ernakulam for gas supply, quotes, availability and product documentation.">
-  <meta name="theme-color" content="#092550">
+  <meta name="theme-color" content="#101a29">
   <link rel="canonical" href="https://okaygroup.org/contact.html">
   <meta property="og:type" content="website">
   <meta property="og:site_name" content="Okay Group">
@@ -14,8 +14,10 @@
   <meta property="og:url" content="https://okaygroup.org/contact.html">
   <meta property="og:image" content="https://okaygroup.org/assets/gas-facility.webp">
   <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
-  <link rel="stylesheet" href="/assets/site.css?v=3">
+  <link rel="stylesheet" href="/assets/site.css">
+  <link rel="stylesheet" href="/assets/motion.css">
   <script src="/assets/site.js" defer></script>
+  <script type="module" src="/assets/motion.js"></script>
   <script type="application/ld+json">{"@context": "https://schema.org", "@type": "Organization", "name": "Okay Group", "url": "https://okaygroup.org/", "email": "okaygroup@live.com", "foundingDate": "1996", "address": {"@type": "PostalAddress", "streetAddress": "Major Industrial Estate, Kalamassery", "addressLocality": "Ernakulam", "addressRegion": "Kerala", "addressCountry": "IN"}}</script>
 </head>
 <body>
@@ -23,17 +25,10 @@
 <header class="masthead">
   <div class="wrap mast-row">
     <a class="brand" href="./" aria-label="Okay Group home"><span class="brand-main">OKAY</span><span class="brand-small">GROUP</span></a>
-    <p class="mast-description">Industrial &amp; medical gases<br>Manorama Oxygen Pvt. Ltd.</p>
-    <div class="mast-contact">
-      <span class="mast-location"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 10c0 5-8 10-8 10s-8-5-8-10a8 8 0 1 1 16 0Z"/><circle cx="12" cy="10" r="2.5"/></svg> Kalamassery, Kerala</span>
-      <a href="mailto:okaygroup@live.com"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m4 7 8 6 8-6"/></svg> okaygroup@live.com</a>
-      <a class="button navy" href="contact.html">Enquiry <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12h15m-6-6 6 6-6 6"/></svg></a>
-    </div>
-  </div>
-  <div class="nav-shell">
-    <div class="wrap">
-      <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="main-nav" hidden><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h16"/></svg> Menu</button>
-      <nav class="nav-row" id="main-nav" aria-label="Main navigation"><a href="./">Home</a><a href="companies.html">About us</a><a href="products.html">Our gases</a><a href="industries.html">Industries</a><a href="supply.html">Supply &amp; quality</a><a href="contact.html" aria-current="page">Contact</a></nav>
+    <nav class="nav-row" id="main-nav" aria-label="Main navigation"><a href="./">Home</a><a href="products.html">Our gases</a><a href="industries.html">Industries</a><a href="supply.html">Supply &amp; quality</a><a href="companies.html">About</a></nav>
+    <div class="mast-actions">
+      <a class="button nav-enquire" href="contact.html">Enquire <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12h15m-6-6 6 6-6 6"/></svg></a>
+      <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="main-nav" aria-label="Menu" hidden><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h16"/></svg></button>
     </div>
   </div>
 </header>
@@ -52,7 +47,7 @@
         <label>Company or facility<input name="company" autocomplete="organization" maxlength="120"></label>
         <label>Email<input name="email" type="email" autocomplete="email" required maxlength="160"></label>
         <label>Delivery location<input name="location" autocomplete="address-level2" maxlength="120"></label>
-        <label class="wide">Product or enquiry<select name="product"><option value="general">General supply</option><option value="industrial-oxygen">Industrial oxygen</option><option value="nitrogen">Nitrogen</option><option value="argon">Argon</option><option value="carbon-dioxide">Carbon dioxide</option><option value="acetylene">Dissolved acetylene</option><option value="helium">Helium</option><option value="medical-oxygen">Medical oxygen</option><option value="oxygen-equipment">Oxygen equipment</option><option value="liquid-nitrogen-equipment">Liquid nitrogen containers</option><option value="dry-ice">Dry ice</option><option value="documentation">Product documentation</option></select></label>
+        <label class="wide">Product or enquiry<select name="product"><option value="general">General supply</option><option value="industrial-oxygen">Industrial oxygen</option><option value="nitrogen">Nitrogen</option><option value="argon">Argon</option><option value="carbon-dioxide">Carbon dioxide</option><option value="acetylene">Dissolved acetylene</option><option value="helium">Helium</option><option value="medical-oxygen">Medical oxygen</option><option value="oxygen-equipment">Oxygen equipment</option><option value="liquid-nitrogen-equipment">Liquid nitrogen containers</option><option value="dry-ice">Dry ice</option><option value="bulk-liquid">Liquid or bulk supply</option><option value="other-gases">Specialty gas or specific grade</option><option value="documentation">Product documentation</option></select></label>
         <label class="wide">Requirements<textarea name="requirements" rows="4" required maxlength="700"></textarea></label>
       </div>
       <div class="form-actions"><button class="button" type="submit">Open email draft <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m4 7 8 6 8-6"/></svg></button><button class="button outline" type="button" id="copy-enquiry" hidden>Copy enquiry</button></div>
